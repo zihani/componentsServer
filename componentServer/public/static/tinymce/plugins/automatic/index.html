@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <!-- <link href="/node_modules/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-p1KAotb3W9ndluCsqePPYnjRm3c6abdnIjo0tQwYUv83VsbsYd43RuofnFAaDo0E" crossorigin="anonymous"> -->
+    <!-- <link rel="stylesheet" href="./utils/element-ui/lib/theme-chalk/index.css"> -->
+    <link rel="stylesheet" href="../../utils/element-ui/lib/theme-chalk/index.css">
+    <link rel="stylesheet" href="./css/index.css">
+    <script src="../../utils/dev/vue.js"></script>
+    <script src="../../utils/element-ui/lib/index.js"></script>
+</head>
+
+<body>
+    <div id="automatic">
+        <div class="row-span">
+            <span>文字对齐方式</span> 
+        </div> 
+        </br>
+        <el-radio-group v-model="radio" @change="onChangeRow()" >
+            <el-radio label="justify">两端对齐</el-radio>
+            <el-radio label="left">左对齐</el-radio>
+            <el-radio label="right">右对齐</el-radio>
+            <el-radio label="center">居中对齐</el-radio>
+        </el-radio-group>
+        </br>
+        <div class="row-span">
+            <span> 排版方式 </span>
+        </div>  
+        </br>
+        <el-radio-group v-model="imageFloat" @change="onImageChangeRow()" >
+            <el-radio label="center">图片居中</el-radio>
+            <el-radio label="left">图片左对齐</el-radio>
+            <el-radio label="right">图片右对齐</el-radio>
+        </el-radio-group>
+        <!-- </br>
+            <el-radio-group v-model="audioFloat" @change="onAudioChangeRow()" >
+                <el-radio label="center">音视频居中</el-radio>
+                <el-radio label="left">音视频左对齐</el-radio>
+                <el-radio label="right">音视频右对齐</el-radio>
+            </el-radio-group> -->
+        <br>
+        <el-radio-group v-model="indent" @change="onIndentChangeRow()" >
+            <el-radio label="2em">首行缩进</el-radio>
+            <el-radio label="no2em">首行不缩进</el-radio>
+        </el-radio-group>
+        </br>
+        <div class="row-span">
+            <span> 标点符号 </span>
+        </div> 
+        </br> 
+        <el-radio-group v-model="radl" @change="onChangeRow()">
+            <el-radio label="quanjiao">全角转半角</el-radio>
+            <el-radio label="banjiao">半角转全角</el-radio>
+        </el-radio-group>
+        </br>
+        <div class="row-span">
+            <span> 格式清理 </span>
+        </div> 
+        </br>
+        <el-checkbox-group v-model='list' @change='checkBox()'>
+            <el-checkbox v-for="(city,key) in cities" :label="city.label" :key="key">{{city.name}}</el-checkbox>
+        </el-checkbox-group>
+        </br>
+	</div>
+</body>
+</html>
+<script>
+	var app=new Vue({
+        el:'#automatic',
+        data:{
+            // message:'hello vue',
+            pasteValue:true,
+            radl:"",//quanjiao
+            radio:"",//left
+            imageFloat:"center",
+            contentStyle:"",
+            list:[],
+            indent:"2em",
+            cities:[
+                {label:"clearstyle",name:"清除格式"},
+                {label:"merge",name:"合并空行"},
+                // {label:"eliminate",name:"清除空行"},
+                {label:"clearClass",name:"清除样式类(class)"},
+                // {label:"imagefloat",name:"图片浮动"},
+                {label:"clearSize",name:"清除字号"},
+                // {label:"clearHTML",name:"清除冗余HTML代码"},
+                // {label:"copy",name:"粘贴过滤"},
+                // {label:"2em",name:"首行缩进"},
+                {label:"clearfont",name:"清除字体"}
+            ],
+            checkList:[],
+        },
+        watch:{
+            contentStyle: function(val,oldVal){
+                val,oldVal
+            }
+        },
+        methods: {
+            onIndentChangeRow(){
+                localStorage.setItem("indent",this.indent);
+            },
+            onAudioChangeRow(){
+
+            },
+            onImageChangeRow(){
+                localStorage.setItem("imageFloat",this.imageFloat);
+            },
+            onChangeRow(){
+                const radio = {radio:this.radio,radl:this.radl}
+                localStorage.setItem("radio", JSON.stringify(radio));
+            },
+            checkBox(){
+                const arr = this.list
+                localStorage.setItem("automatic", JSON.stringify(arr));
+            },
+            init(){
+                const automatic = JSON.parse(localStorage.getItem('automatic'))
+                const type = typeof automatic
+                if(type === "object"  ){
+                    this.list = automatic
+                }
+                this.radl = JSON.parse(localStorage.getItem('radio')).radl
+                this.radio = JSON.parse(localStorage.getItem('radio')).radio
+                this.imageFloat  = localStorage.getItem('imageFloat')
+                this.indent = localStorage.getItem('indent')
+
+                console.log(this.imageFloat)
+            }
+        },
+        mounted() {
+            this.init()
+        },
+    })
+</script>

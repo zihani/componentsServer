@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="../../../utils/element-ui/lib/theme-chalk/index.css">
+    <script src="../../../utils/dev/vue.js"></script>
+    <script src="../../../utils/element-ui/lib/index.js"></script>
+    <script src="../../../utils/axios/dist/axios.min.js"></script>
+    <script src="../../../utils/js-cookie/js.cookie.min.js"></script>
+    <style>
+        .card{
+            width: 19%;
+            float: left;
+            margin-right: 5px;
+            margin-bottom: 5px;
+        }
+        .item-icons {
+            float:left;
+        }
+        .icon-item-small {
+            width: 215px;
+            height: 228px;
+            display: flex;
+            border:1px solid #ffffff;
+        }
+        .icon-mask {
+            /* border-radius: 12px; */
+            width: 217px;
+            height: 228px;
+            position: absolute;
+            opacity: 0;
+            background: rgba(57, 60, 63, 0.8);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-around;
+            z-index: 100;
+        }
+        .icon-item-small:hover .icon-mask {
+            opacity: 1;
+            cursor: default;
+        }
+        .icon-copy {
+            color: #AAAAAA;
+            text-align: center;
+            width: 117px;
+            height: 48px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+    </style>
+</head>
+<body>
+    <div id="image">
+        <el-tabs v-model="activeName">
+            <el-tab-pane label="素材库" name="first" @tab-click="handleClick">
+                <el-tabs v-model="firstTabName" @tab-click="handleClick">
+                    <el-tab-pane label="图片" name="img">
+                        <div style="height: 300px;  overflow-y: scroll;">
+                            <el-empty v-if="imageList.length === 0" description="暂无素材"></el-empty>
+                            <div class="item-icons" v-for="item in imageList" :key="item.id">
+                                <div style="padding: 2px; text-align: center;">
+                                    <div class="icon-item-small">
+                                        <el-image :src="item.path" style="border-radius: 8px; width: 100%;"  fit="cover">
+                                        </el-image>
+                                    </div>
+                                    <div class="bottom clearfix">
+                                        <el-button type="text" class="button" @click="insertimage(item)">选取</el-button>
+                                    </div>
+                                </div>
+                                <!-- <div class="icon-item-small">
+                                    <el-image :src="item.path" style="border-radius: 8px; width: 100%;"  fit="cover">
+                                    </el-image>
+                                    
+                                    <div style=" padding: 2px; text-align: center;">
+                                        <div class="bottom clearfix">
+                                            <el-button type="text" class="button" @click="insertimage(item)">选取</el-button>
+                                        </div>
+                                    </div> 
+                                </div> -->
+                            </div>
+                        </div>
+                        <br>
+                        <el-pagination
+                        :total="imgTotal"
+                        :page.sync="imgopageNum"
+                        :limit.sync="imgopageSize"
+                        :page-sizes="[10, 20, 30, 50]"
+                        @current-change="getimgList"
+                       >
+                    </el-pagination>
+                    </el-tab-pane>
+                    <el-tab-pane label="视频" name="viod">
+                        <div style="height: 300px; overflow-y: scroll;">
+                            <!-- <el-empty v-if="videoList.length === 0" description="描述文字"></el-empty> -->
+                            <el-empty v-if="videoList.length === 0" description="暂无素材"></el-empty>
+                            <el-card class="card" v-for="item in videoList" :key="item.id" shadow="hover":body-style="{ padding: '0px' }">
+                                <!-- <el-image :src="" fit="fill"> </el-image> -->
+                                <div style="padding: 2px; text-align: center;">
+                                    <div>
+                                        <video width="100%" height="228" :src="item.path" controls="controls"></video>
+                                    </div>
+                                    <div class="bottom clearfix">
+                                        <el-button type="text" class="button" @click="insertVideo(item)">选取</el-button>
+                                    </div>
+                                </div>
+                            </el-card>
+                        </div>
+                        <br>
+                        <el-pagination
+                            :total="videoTotal"
+                            :page.sync="videopageNum"
+                            :limit.sync="videopageSize"
+                            :page-sizes="[10, 20, 30, 50]"
+                            @current-change="getvideoList"
+                           >
+                        </el-pagination>  
+                    </el-tab-pane>
+                </el-tabs>
+            </el-tab-pane>
+            <el-tab-pane label="建稿素材" name="createfirst">
+                <el-tabs v-model="createfirstTabName" @tab-click="handleClick">
+                    <el-tab-pane label="图片" name="img">
+                        <div style="height: 300px;  overflow-y: scroll;">
+                            <el-empty v-if="createimageList.length === 0" description="暂无素材"></el-empty>
+                            <div class="item-icons" v-for="item in createimageList" :key="item.id">
+                                <div style="padding: 2px; text-align: center;">
+                                    <div class="icon-item-small">
+                                        <el-image :src="item.path" style="border-radius: 8px; width: 100%;"  fit="cover">
+                                        </el-image>
+                                    </div>
+                                    <div class="bottom clearfix">
+                                        <el-button type="text" class="button" @click="insertimage(item)">选取</el-button>
+                                    </div>
+                                </div>
+                                <!-- <div class="icon-item-small">
+                                    <el-image :src="item.path" style="border-radius: 8px; width: 100%;"  fit="cover">
+                                    </el-image>
+                                    <div class="icon-mask">      
+                                        <div style="padding: 2px; text-align: center;">
+                                            <div class="bottom clearfix">
+                                                <el-button type="text" class="button" @click="insertimage(item)">选取</el-button>
+                                            </div>
+                                        </div> 
+                                    </div>
+                                </div> -->
+                            </div>
+                        </div>
+                        <br>
+                        <el-pagination
+                            :total="createimgTotal"
+                            :page.sync="createimgopageNum"
+                            :limit.sync="createimgopageSize"
+                            :page-sizes="[10, 20, 30, 50]"
+                            @current-change="getcreateimgList"
+                           >
+                        </el-pagination>
+                    </el-tab-pane>
+                    <el-tab-pane label="视频" name="viod">
+                        <div style="height: 300px; overflow-y: scroll;">
+                            <el-empty v-if="createvideoList.length === 0" description="暂无素材"></el-empty>
+                            <el-card class="card" v-for="item in createvideoList" :key="item.id" shadow="hover":body-style="{ padding: '0px' }">
+                                <!-- <el-image :src="" fit="fill"> </el-image> -->
+                                <div style="padding: 2px; text-align: center;">
+                                    <div>
+                                         <video width="100%" height="228" :src="item.path" controls="controls"></video>
+                                    </div>
+                                    <div class="bottom clearfix">
+                                        <el-button type="text" class="button" @click="insertVideo(item)">选取</el-button>
+                                    </div>
+                                </div>
+                            </el-card>   
+                        </div>
+                        <br>
+                        <el-pagination
+                            :total="createvideTotal"
+                            :page.sync="createvideopageNum"
+                            :limit.sync="createvideopageSize"
+                            :page-sizes="[10, 20, 30, 50]"
+                            @current-change="getcreatevideoList"
+                           >
+                        </el-pagination>
+                    </el-tab-pane>
+                </el-tabs>
+            </el-tab-pane>
+            
+        </el-tabs>
+    </div>
+</body>
+</html>
+<script> 
+    // function isVisible (){
+    //     let imageDom = document.querySelector('.image').getBoundingClientRect()
+    //     const viewHeight = document.documentElement.clientHeight;
+    //     if(imageDom.top <= viewHeight && imageDom.bottom >= 0){
+    //         console.log("true")
+    //     }else{
+    //         console.log("false")
+    //     }
+    // }
+    // window.addEventListener('scroll', isVisible)
+    function init (url){
+        parent.imageList.push(url)
+    }
+	var app=new Vue({
+        el:'#image',
+        data:{
+            createimageList:[],
+            createvideoList:[],
+            createfirstTabName:"img",
+            firstTabName:"img",
+            fits: ['fill', 'contain', 'cover', 'none', 'scale-down'],
+            imageList:[
+                // {id:0, path:'https://img2.baidu.com/it/u=3908142881,2459234098&fm=253&fmt=auto&app=138&f=JPEG?w=750&h=500'},
+                // {id:1, path:'https://img0.baidu.com/it/u=1880899726,3824907986&fm=253&fmt=auto&app=138&f=JPEG?w=750&h=500' },
+                // {id:2, path:'https://img1.baidu.com/it/u=4049022245,514596079&fm=253&fmt=auto&app=120&f=JPEG?w=889&h=500' },
+                // {id:3, path:'https://img2.baidu.com/it/u=2988815593,139112342&fm=253&fmt=auto&app=138&f=JPEG?w=750&h=500' },
+                // {id:4, path:'https://img2.baidu.com/it/u=2988815593,139112342&fm=253&fmt=auto&app=138&f=JPEG?w=750&h=500' },
+                // {id:5, path:'https://img2.baidu.com/it/u=2988815593,139112342&fm=253&fmt=auto&app=138&f=JPEG?w=750&h=500' },
+                // {id:6, path:'https://img2.baidu.com/it/u=2988815593,139112342&fm=253&fmt=auto&app=138&f=JPEG?w=750&h=500' },
+                // {id:7, path:'https://img2.baidu.com/it/u=1328118902,2568986647&fm=253&fmt=auto&app=138&f=JPEG?w=640&h=360' },
+                // {id:8, path:'https://img2.baidu.com/it/u=530602636,3230868552&fm=253&fmt=auto&app=138&f=PNG?w=889&h=500' },
+                // {id:9, path:'https://img0.baidu.com/it/u=234069359,687398406&fm=253&fmt=auto&app=138&f=JPEG?w=500&h=281' },
+                // {id:10, path:'https://img0.baidu.com/it/u=2060478176,2751016389&fm=253&fmt=auto&app=138&f=JPEG?w=500&h=281' },
+                // {id:11, path:'https://img0.baidu.com/it/u=3155150237,2943070590&fm=253&fmt=auto&app=138&f=JPEG?w=667&h=500' },
+                // {id:12, path:'https://img1.baidu.com/it/u=3384796346,381674655&fm=253&fmt=auto&app=138&f=JPEG?w=889&h=500' },
+                // {id:13, path:'https://img1.baidu.com/it/u=3164998783,2199444470&fm=253&fmt=auto&app=138&f=JPEG?w=500&h=333' },
+                // {id:14, path:'https://img2.baidu.com/it/u=2988815593,139112342&fm=253&fmt=auto&app=138&f=JPEG?w=750&h=500' }
+            ],
+            activeName:"first",
+            videoTotal:"0",
+            videoList:[],
+            videopageNum:"1",
+            videopageSize:"10",
+            imgTotal:"0",
+            imgopageNum:"1",
+            imgopageSize:"10",
+            createvideTotal:"0",
+            createvideopageNum:"1",
+            createvideopageSize:"10",
+            createimgTotal:"0",
+            createimgopageNum:"1",
+            createimgopageSize:"10",
+        },
+        watch:{
+            url:{
+                handler(newValue, oldValue){
+                    init(newValue)
+                }
+            }
+        },
+        methods: {
+            getvideoList(value){
+                this.videopageNum = value
+                this.initVideo()
+            },
+            getimgList(value){
+                this.imgopageNum = value
+                this.initImage()
+            },
+            getcreateimgList(value){
+                this.createimgopageNum = value
+                this.initcreateImage()
+            },
+            getcreatevideoList(value){
+                this.createvideopageNum = value
+                this.initcreateVideo()
+            },
+            handleClick(){
+                this.initImage();
+                this.initVideo();
+                this.initcreateImage();
+                this.initcreateVideo();
+            },
+            insertVideo(item){
+                this.$message({
+                    message: '选入成功',
+                    type: 'success'
+                });
+                var editor = parent.tinymce.activeEditor;
+                var range = editor.selection.getRng();
+                var divNode = editor.getDoc().createElement('video');
+                
+                const realStr = item.path;
+                divNode.src = realStr;
+                divNode.loop = true
+                divNode.preload = ""
+                divNode.controls = "controls";
+                divNode.style["marginLeft"] =  "auto";
+                divNode.style["marginRight"] = "auto";
+                divNode.style["display"] = "block";
+                divNode.setAttribute('logofile2', "")
+                divNode.setAttribute('logofile', "")
+                range.insertNode(divNode);
+            },
+            insertimage(item){
+                this.$message({
+                    message: '选入成功',
+                    type: 'success'
+                });
+                var editor = parent.tinymce.activeEditor;
+                var range = editor.selection.getRng();
+                var divNode = editor.getDoc().createElement('img');
+                const realStr = item.path
+                divNode.title = item.name;
+                divNode.alt = item.name;
+                divNode.style["maxWidth"] = "100%"
+                divNode.src = realStr;
+                range.insertNode(divNode);
+           },
+           initcreateImage(){
+                let params = {
+                    pageNum:this.createimgopageNum,
+                    pageSize:this.createimgopageSize,
+                    type:1,
+                    uploadType:2
+                }
+                let url = localStorage.getItem('_url')
+                axios.get(url+`api/platform/material/list`,{
+                    headers: {
+                        'Authorization': Cookies.get("Admin-Token")
+                    },
+                    params:params
+                }).then(res =>{
+                    if(res.data.code === 200){
+                        debugger
+                        this.createimgTotal = res.data.data.total
+                        this.createimageList = res.data.data.rows.map(row =>{
+                            // row.path = document.location.origin +"/"+ row.path
+                            row.path = url + row.path
+                            return row
+                        });
+                    }
+                })
+            },
+            initcreateVideo(){
+                let params = {
+                    pageNum:this.createvideopageNum,
+                    pageSize:this.createvideopageSize,
+                    type:2,
+                    uploadType:2
+                }
+                let _url = localStorage.getItem('_url')
+                axios.get(_url+"api/platform/material/list",{
+                    headers: {
+                        'Authorization': Cookies.get("Admin-Token")
+                    },
+                    params:params
+                }).then(res =>{
+                    if(res.data.code === 200){
+                        debugger
+                        this.createvideTotal = res.data.data.total
+                        this.createvideoList = res.data.data.rows.map(row =>{
+                            row.path = _url + row.path
+                            return row
+                        })
+                        // debugger
+                    }
+                })
+            },
+            initImage(){
+                    let params = {
+                        pageNum:this.imgopageNum,
+                        pageSize:this.imgopageSize,
+                        type:1,
+                        uploadType:1
+                    }
+                    let url = localStorage.getItem('_url')
+                    axios.get(url+`api/platform/material/list`,{
+                        headers: {
+                            'Authorization': Cookies.get("Admin-Token")
+                        },
+                        params:params
+                    }).then(res =>{
+                        if(res.data.code === 200){
+                            debugger
+                            this.imgTotal = res.data.data.total
+                            this.imageList = res.data.data.rows.map(row =>{
+                                row.path = url + row.path
+                                return row
+                            })
+                            // this.createimageList = res.data.data.rows.filter(row => row.uploadType === 2).map(row =>{
+                            //     // row.path = document.location.origin +"/"+ row.path
+                            //     row.path = url +"/"+ row.path
+                            //     return row
+                            // });
+                        }
+                    })
+            },
+            initVideo(){
+                let params = {
+                    pageNum:this.videopageNum,
+                    pageSize:this.videopageSize,
+                    type:2,
+                    uploadType:1
+                }
+                let _url = localStorage.getItem('_url')
+                // api/platform/material/materiallist
+                axios.get(_url+"api/platform/material/list",{
+                    headers: {
+                        'Authorization': Cookies.get("Admin-Token")
+                    },
+                    params:params
+                }).then(res =>{
+                    if(res.data.code === 200){
+                        debugger
+                        this.videoTotal = res.data.data.total
+                        this.videoList = res.data.data.rows.map(row =>{
+                            row.path = _url + row.path
+                            return row
+                        })
+                        // this.createvideoList = res.data.data.rows.filter(row => row.uploadType === 2)
+                    }
+                })
+            }
+        },
+        mounted() {
+            this.initImage();
+            this.initVideo();
+            this.initcreateImage();
+            this.initcreateVideo();
+        },
+    })
+</script>

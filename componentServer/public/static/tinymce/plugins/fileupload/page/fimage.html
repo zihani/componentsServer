@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="../../../utils/element-ui/lib/theme-chalk/index.css">
+    <script src="../../../utils/dev/vue.js"></script>
+    <script src="../../../utils/element-ui/lib/index.js"></script>
+</head>
+<body>
+    <div id="fimage">
+        <div style="text-align: center">
+            <el-form ref="form" :model="form" label-width="80px">
+                <el-row>
+                    <el-col :span="24" style="padding-left: 100px; width: 45%;">  
+                          <el-form-item label="来源:">
+                                <el-radio v-model="radio" label="1">本地上传</el-radio>
+                                <el-radio v-model="radio" label="0">网络</el-radio>
+                          </el-form-item>
+                    </el-col>
+                </el-row>
+                <el-row v-if="radio == 1">
+                    <el-col :span="24" style="padding-left: 100px;">  
+                        <div  style="text-align: center; width:80%;">
+                            <el-form-item label="上传:">
+                                <el-input v-model="form.text" placeholder="请输入内容"></el-input>
+                            </el-form-item>
+                        </div>
+                    </el-col>
+                </el-row>
+                <div v-if="radio == 1" >
+                    <el-upload
+                        class="upload-demo"
+                        ref="upload"
+                        :auto-upload="uploadConfig.auto"
+                        :drag="uploadConfig.drag"
+                        :action="uploadConfig.action"
+                        :multiple="uploadConfig.multiple"
+                        :data="uploadConfig.network.body"
+                        :headers="uploadConfig.network.headers"
+                        :file-list="fileList"
+                        :on-preview="handlePreview"
+                        :on-remove="handleRemove"
+                        :limit="uploadConfig.limit"
+                        :list-type="uploadConfig.tableType"
+                        :on-success="handleAvatarSuccess"
+                        :before-upload="beforeAvatarUpload"
+                        :on-error="onError"
+                        :on-progress="onProgress"
+                        :on-change="onChange"
+                        :disabled="false"
+                        >
+                        <i v-if="uploadConfig.drag" class="el-icon-upload"></i>
+                        <div class="el-upload__text" v-if="uploadConfig.drag">
+                        将文件拖到此处，或<em>点击上传</em>
+                        </div>
+                        <el-button
+                        slot="trigger"
+                        size="small"
+                        type="primary"
+                        v-if="!uploadConfig.drag"
+                        >选取文件</el-button
+                        >
+                        <el-button
+                        style="margin-left: 10px"
+                        size="small"
+                        type="success"
+                        v-if="uploadConfig.submit && uploadConfig.drag === false"
+                        @click="submitUpload"
+                        >开始上传</el-button
+                        >
+                        <div
+                        class="el-upload__tip"
+                        slot="tip"
+                        v-if="uploadConfig.uploadtips.isShow"
+                        >
+                        {{ uploadConfig.uploadtips.text }}
+                        </div>
+                    </el-upload>
+                </div>
+                <el-row  v-if="radio == 0">
+                    <el-col :span="24" style="padding-left: 100px;">  
+                        <div  style="text-align: center; width:80%;">
+                            <el-form-item label="url地址:">
+                                <el-input v-model="url" placeholder="url"></el-input>
+                            </el-form-item>
+                        </div>
+                    </el-col>
+                </el-row>
+
+
+            </el-from>
+           
+        </div>
+    </div>
+</body>
+</html>
+<script> 
+    function init (url){
+        this.parent.urlImage = url
+    }
+	var app=new Vue({
+        el:'#fimage',
+        data:{
+            text:"",
+            form:{},
+            url:"",
+            radio:"1",
+            message:"图片上传",
+            uploadConfig:{
+                action:"http://idea.xhszjs.com/api/ability/file/upload/img", 
+                drag:true,   
+                multiple:true, 
+                limit:3,  
+                submit:false, 
+                tableType:'picture',
+                auto:true, 
+                showfilelist:true,  
+                uploadtips:{ 
+                    isShow:true, 
+                    text:"只能上传jpg/png文件，且不超过100kb"
+                },
+                network:{
+                    //上传时带的参数
+                    body:{userName:"杨子汉"},
+                    //设置上传请求头
+                    headers:{Authorization:"eyJhbGciOiJIUzUxMiJ9.eyJsb2dpbl91c2VyX2tleSI6IjQzMjRjMDk5LWJkZWQtNGJhZS1iZTQ1LTk2NGVhYzIzODM0NCJ9.GzOX7BVefGIG0hVEkj3aJAk1bat7dw3cvsM2P3JMPYF9M1fEvYUMw8mzu5om2V5zxrhfJib9YKm-lgSSgQwl7Q"}
+                }
+            },
+            fileList: [],
+        },
+        watch:{
+            url:{
+                handler(newValue, oldValue){
+                    init(newValue)
+                }
+            }
+        },
+        methods: {
+             //点击文件列表中已上传的文件时的钩子
+            handlePreview(file) {
+               console.log(file);
+            },
+            //文件列表移除文件时的钩子
+            handleRemove(file, fileList) {
+               console.log(file, fileList);
+            },
+            submitUpload() {
+            },
+            // 文件上传成功时的钩子
+            handleAvatarSuccess(res, file, fileList) {
+              console.log(res, file, fileList);
+            },
+            // 上传时文件后缀判断
+            beforeAvatarUpload(file) {
+                console.log(file.type);
+                let fileType = {
+                    docx:"application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+                    image:"image/jpeg"
+                }
+                const isJPG = file.type === fileType.docx;
+                // console.log(isJPG)
+                const isLt2M = file.size / 1024 / 1024 < 2;
+                if (!isJPG) {
+                    this.$message.error("上传头像图片只能是 JPG 格式!");
+                }
+                if (!isLt2M) {
+                    this.$message.error("上传头像图片大小不能超过 2MB!");
+                }
+                return isJPG && isLt2M;
+            },
+            //上传失败后
+            onError(err, file, fileList) {
+               console.log(err, file, fileList) 
+            },
+            //文件上传时的钩子
+            onProgress(event, file, fileList) {
+              console.log(event, file, fileList)
+            },
+            //文件状态改变时的钩子，添加文件、上传成功和上传失败时都会被调用
+            onChange(file, fileList) {
+                console.log(file, fileList)
+            },
+        },
+        mounted() {
+            this.init()
+        },
+    })
+
+</script>

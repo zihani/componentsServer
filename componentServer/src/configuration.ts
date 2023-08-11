@@ -6,7 +6,7 @@ import { join } from 'path';
 // import { DefaultErrorFilter } from './filter/default.filter';
 // import { NotFoundFilter } from './filter/notfound.filter';
 import { ReportMiddleware } from './middleware/report.middleware';
-
+import * as staticFile from '@midwayjs/static-file';
 @Configuration({
   imports: [
     koa,
@@ -15,9 +15,13 @@ import { ReportMiddleware } from './middleware/report.middleware';
       component: info,
       enabledEnvironment: ['local'],
     },
+    staticFile
   ],
-  importConfigs: [join(__dirname, './config')],
+  importConfigs: [
+    join(__dirname, './config')
+  ],
 })
+
 export class ContainerLifeCycle {
   @App()
   app: koa.Application;

@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <!-- <link href="/node_modules/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-p1KAotb3W9ndluCsqePPYnjRm3c6abdnIjo0tQwYUv83VsbsYd43RuofnFAaDo0E" crossorigin="anonymous"> -->
+    <!-- <link rel="stylesheet" href="./utils/element-ui/lib/theme-chalk/index.css"> -->
+    <link rel="stylesheet" href="../../utils/element-ui/lib/theme-chalk/index.css">
+    <link rel="stylesheet" href="./css/index.css">
+    <script src="../../utils/dev/vue.js"></script>
+    <script src="../../utils/js-cookie/js.cookie.min.js"></script>
+    <script src="../../utils/element-ui/lib/index.js"></script>
+    <script src="../../utils/axios/dist/axios.min.js"></script>
+</head>
+
+<body>
+    <div id="duplicatecheck">
+        <div v-if="duplicateCheckingIntegrateReqVOList.length > 0">
+            此稿件与以下稿件相似度较高
+            <div style="
+            padding-top: 10px;
+            padding-right: 10px;
+            padding-left: 10px;" v-for="item in duplicateCheckingIntegrateReqVOList[0].duplicateCheckingReqs" :key="item">
+                <el-card class="box-card" style="background-color: rgba(239, 243, 255, 1); font-size：1" shadow="never">
+                稿件标题：{{item.title}}
+                </br>
+                签发人:{{item.publish_user_name}}
+                作者:{{item.author}}
+                </br>
+                签发时间:{{item.publish_date}}
+                </el-card>
+            </div>
+        </div>
+        <div v-if="duplicateCheckingIntegrateReqVOList.length  === 0">
+            <el-empty description="暂无重复稿件"></el-empty>
+        </div>
+	</div>
+</body>
+</html>
+<script>
+	var app=new Vue({
+        el:'#duplicatecheck',
+        data:{
+            duplicateCheckingIntegrateReqVOList:[]
+        },
+        methods: {
+            onIndentChangeRow(){
+                localStorage.setItem("indent",this.indent);
+            },
+            onAudioChangeRow(){
+
+            },
+            onImageChangeRow(){
+                localStorage.setItem("imageFloat",this.imageFloat);
+            },
+            onChangeRow(){
+                const radio = {radio:this.radio,radl:this.radl}
+                localStorage.setItem("radio", JSON.stringify(radio));
+            },
+            checkBox(){
+                const arr = this.list
+                localStorage.setItem("automatic", JSON.stringify(arr));
+            },
+            init(){
+                parent.tinymce._temp.checkInfo
+                let checkInfo =  parent.tinymce._temp.checkInfo
+                let _url = localStorage.getItem('_url')
+                let token = Cookies.get("Admin-Token")
+                axios.post(_url + "api/manuscript/manuscript/integrate/check/auditResult",checkInfo,{
+                    headers:{
+                        'Authorization': token
+                    }
+                }).then(res =>{
+                    if (res.data.code == 200 && res.data.data && res.data.data.duplicateCheckingIntegrateReqVOList.length > 0) {
+                        if (res.data.data.duplicateCheckingIntegrateReqVOList[0].duplicateCheckingReqs.length > 0) {
+                            this.duplicateCheckingIntegrateReqVOList = res.data.data.duplicateCheckingIntegrateReqVOList;
+                        }
+                    }
+                })
+                // check(checkInfo).then(res =>{
+                //     if (res.code == 200 && res.data && res.data.duplicateCheckingIntegrateReqVOList.length > 0) {
+                //     if (
+                //         res.data.duplicateCheckingIntegrateReqVOList[0]
+                //         .duplicateCheckingReqs.length > 0
+                //     ) {
+                //     }
+                //     }
+                // })
+            }
+        },
+        mounted() {
+            this.init()
+        },
+    })
+
+</script>

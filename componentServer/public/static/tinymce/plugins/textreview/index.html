@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <!-- <link href="/node_modules/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-p1KAotb3W9ndluCsqePPYnjRm3c6abdnIjo0tQwYUv83VsbsYd43RuofnFAaDo0E" crossorigin="anonymous"> -->
+    <link rel="stylesheet" href="../../utils/element-ui/lib/theme-chalk/index.css">
+    <script src="../../utils/axios/dist/axios.min.js"></script>
+    <script src="../../utils/js-cookie/js.cookie.min.js"></script>
+    <script src="../../utils/dev/vue.js"></script>
+    <script src="../../utils/element-ui/lib/index.js"></script>
+</head>
+<body>
+    <div id="textreview">
+        <el-tabs v-model="activeName" @tab-click="handleClick">
+            <el-tab-pane label="错别字纠错" name="zi">
+               <div>
+                  <el-empty description="暂无错别字内容"></el-empty>
+               </div>
+            </el-tab-pane>
+            <el-tab-pane label="安全内容审核" name="neirong">
+                <el-empty description="暂无审核内容"></el-empty>
+            </el-tab-pane>
+          </el-tabs>
+    </div>
+</body>
+</html>
+<script>
+   	var app=new Vue({
+        el:'#textreview',
+        data:{
+            activeName:"zi"
+        }
+    })
+    var editor = parent.tinymce.activeEditor;
+    var text = parent.text;
+    
+    console.log(text)
+</script>

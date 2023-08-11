@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="../../utils/element-ui/lib/theme-chalk/index.css">
+    <!-- <script src="../../utils/axios/dist/axios.min.js"></script> -->
+    <script src="../../utils/js-cookie/js.cookie.min.js"></script>
+    <script src="../../utils/dev/vue.js"></script>
+    <script src="../../utils/element-ui/lib/index.js"></script>
+</head>
+<body>
+    <div id="video">
+        <!-- <img src="./img/file.svg" alt="" srcset=""> -->
+        <div style="text-align: center">
+            <el-form ref="form" :model="form" label-width="80px">
+                <div style="height: 50px;"> </div>
+                <el-row v-if="radio == 1">
+                    <el-col :span="24" style="padding-left: 100px;">  
+                        <!-- <div  style="text-align: center; width:80%;">
+                            <el-form-item label="上传:">
+                                <el-input v-model="form.text" placeholder="请输入内容"></el-input>
+                            </el-form-item>
+                        </div> -->
+                    </el-col>
+                </el-row>
+                <div v-if="radio == 1" >
+                    <el-upload
+                        class="upload-demo"
+                        ref="upload"
+                        :auto-upload="uploadConfig.auto"
+                        :drag="uploadConfig.drag"
+                        :action="uploadConfig.action"
+                        :multiple="uploadConfig.multiple"
+                        :data="uploadConfig.network.body"
+                        :headers="uploadConfig.network.headers"
+                        :file-list="fileList"
+                        :on-preview="handlePreview"
+                        :on-remove="handleRemove"
+                        :limit="uploadConfig.limit"
+                        :list-type="uploadConfig.tableType"
+                        :on-success="handleAvatarSuccess"
+                        :before-upload="beforeAvatarUpload"
+                        :on-error="onError"
+                        :on-progress="onProgress"
+                        :on-change="onChange"
+                        :disabled="false"
+                        >
+                        <i v-if="uploadConfig.drag" class="el-icon-upload"></i>
+                        <div class="el-upload__text" v-if="uploadConfig.drag">
+                        将文件拖到此处，或<em>点击上传</em>
+                        </div>
+                        <el-button
+                        slot="trigger"
+                        size="small"
+                        type="primary"
+                        v-if="!uploadConfig.drag"
+                        >选取文件</el-button
+                        >
+                        <el-button
+                        style="margin-left: 10px"
+                        size="small"
+                        type="success"
+                        v-if="uploadConfig.submit && uploadConfig.drag === false"
+                        @click="submitUpload"
+                        >开始上传</el-button
+                        >
+                        <div
+                        class="el-upload__tip"
+                        slot="tip"
+                        v-if="uploadConfig.uploadtips.isShow"
+                        >
+                        {{ uploadConfig.uploadtips.text }}
+                        </div>
+                    </el-upload>
+                </div>
+                <el-row  v-if="radio == 0">
+                    <el-col :span="24" style="padding-left: 100px;">  
+                        <div  style="text-align: center; width:80%;">
+                            <el-form-item label="url地址:">
+                                <el-input v-model="url" placeholder="url"></el-input>
+                            </el-form-item>
+                        </div>
+                    </el-col>
+                </el-row>
+            </el-from>
+        </div>
+    </div>
+</body>
+</html>
+<script> 
+	var app=new Vue({
+        el:'#video',
+        data:{
+            text:"",
+            form:{},
+            url:"",
+            radio:"1",
+            uploadConfig:{
+                action:"http://xxx/api/ability/file/richtext", 
+                drag:true,   
+                multiple:true, 
+                limit:3,  
+                submit:false, 
+                tableType:'text',
+                auto:true, 
+                showfilelist:true,  
+                uploadtips:{ 
+                    isShow:true, 
+                    text:"只能上传txt,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.swf,.pdf,.tiff,.tif,.ai,.psd,.zip,.rar,.tar,.gz,.z,.iso,.cab,.jar,.ceb,.wps,mp3文件"
+                },
+                network:{
+                    //设置上传请求头
+                    headers:{Authorization: Cookies.get("Admin-Token")}
+                }
+            },
+            fileList: [],
+        },
+        methods: {
+             //点击文件列表中已上传的文件时的钩子
+            handlePreview(file) {
+            //    console.log(file);
+            },
+            //文件列表移除文件时的钩子
+            handleRemove(file, fileList) {
+            //    console.log(file, fileList);
+            },
+            submitUpload() {
+            },
+            // 文件上传成功时的钩子
+            handleAvatarSuccess(res, file, fileList) {
+                const list = fileList.map(row =>{
+                    return {
+                        url:row.response.data.url,
+                        name:row.response.data.fileName,
+                        type:row.response.data.type,
+                        fileSize:row.response.data.fileSize + ""
+                    }
+                })
+                localStorage.setItem("fileList",JSON.stringify(list));
+                let fliedata = JSON.parse(localStorage.getItem('fliedata'))
+                if(fliedata && fliedata.length > 0){
+                    fliedata.push({name:res.data.fileName,url:res.data.url,type:res.data.type})
+                    localStorage.setItem("fliedata",JSON.stringify(fliedata));
+                }else{
+                    localStorage.setItem("fileList",JSON.stringify(list));
+                    localStorage.setItem("fliedata",JSON.stringify(list));
+                }
+         
+            },
+            // 上传时文件后缀判断
+            beforeAvatarUpload(file) {
+                // console.log(file.name);
+                let strs = file.name.split(".")
+                // console.log(strs)
+                // console.log()
+                // console.log(file.name);
+               
+                // let fileType = {
+                //     docx:"application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+                //     ai:"application/postscript",
+                //     doc:"application/msword",
+                //     gz:"application/gzip",
+                //     pdf:"application/pdf",
+                //     pptx:"application/vnd.openxmlformats-officedocument.presentationml.presentation",
+                //     swf:"application/x-shockwave-flash",
+                //     tar:"application/x-tar",
+                //     tif:"image/tiff",
+                //     wps:"application/kswps",
+                //     xls:"application/vnd.ms-excel",
+                //     xlsx:"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                //     zip:"application/x-zip-compressed"
+                // }
+                console.log(file.type)
+                let isType = true
+                if(file.type){
+                    isType = [
+                    "text/plain",
+                    "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+                    "application/postscript",
+                    "application/msword",
+                    "application/gzip",
+                    "application/pdf",
+                    "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+                    "application/x-shockwave-flash",
+                    "application/x-tar",
+                    "image/tiff",
+                    "application/kswps",
+                    "application/vnd.ms-excel",
+                    "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                    "application/x-zip-compressed",
+                    "application/vnd.ms-powerpoint",
+                    "audio/mpeg"
+                    ].indexOf(file.type) !== -1
+                }else{
+                    if(!file.type){
+                        isType = ["iso","cab","ceb","jar","psd","rar","z"].indexOf(strs[strs.length - 1]) !== -1
+                    }else{
+                        isType = false
+                    }
+                }
+                if (!isType) {
+                    this.$message.error("上传支持.txt,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.swf,.pdf,.tiff,.tif,.ai,.psd,.zip,.rar,.tar,.gz,.z,.iso,.cab,.jar,.ceb,.wps,.mp3");
+                }
+                // if (!isLt2M) {
+                //     this.$message.error("上传头像图片大小不能超过 2MB!");
+                // }
+                return isType;
+            },
+            //上传失败后
+            onError(err, file, fileList) {
+            //    console.log(err, file, fileList) 
+            },
+            //文件上传时的钩子
+            onProgress(event, file, fileList) {
+            //   console.log(event, file, fileList)
+            },
+            //文件状态改变时的钩子，添加文件、上传成功和上传失败时都会被调用
+            onChange(file, fileList) {
+                // console.log(file, fileList)
+            },
+            init(){
+                let url = localStorage.getItem('_url')
+                this.uploadConfig.action = url+"api/ability/file/richtext"
+            }
+        },
+        mounted() {
+            this.init();
+        },
+    })
+
+</script>

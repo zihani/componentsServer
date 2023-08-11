@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="../../utils/element-ui/lib/theme-chalk/index.css">
+    <link rel="stylesheet" href="./antd/antd.min.css">
+    <script src="../../utils/axios/dist/axios.min.js"></script>
+    <script src="../../utils/js-cookie/js.cookie.min.js"></script>
+    <script src="../../utils/dev/vue.js"></script>
+    <script src="./antd/antd.min.js"></script>
+    <script src="../../utils/element-ui/lib/index.js"></script>
+    <style>
+        body {
+            padding: 10px
+        }
+        .ant-steps-item{
+            height: 180px;
+        }
+        .current {
+           margin-left: 30px;
+        }
+        .ant-upload {
+            height: 100%;
+        }
+        .uplodad {
+            width: 700px;
+            height: 120px;
+            margin-top: 40px;
+        }
+    </style>
+</head>
+<body>
+    <div id="video">
+            <div style="margin-top: 30px;" v-if="changing">
+                <a-row type="flex" justify="center" align="top">
+                    <a-col :span="4">
+                        <div class="current">
+                            <a-steps :current="current" direction="vertical">
+                                <a-step title="视频上传:"></a-step>
+                                <a-step title="视频封面:"></a-step>
+                                <a-step title="备注:"></a-step>
+                            </a-steps>
+                        </div>
+                    </a-col>
+                    <a-col :span="20"> 
+                        <div style="width: 700px; height: 120px; margin-top: 10px;"> 
+                            <a-upload-dragger
+                                v-model:fileList="fileList"
+                                name="file"
+                                :multiple="true"
+                                :action="fileurl"
+                                :data="filedata"
+                                :max-count="1"
+                                @change="handleChangevideo"
+                                @drop="handleDrop"
+                                :headers="headers"
+                            >
+                            <!-- :before-upload="beforeUpload" -->
+
+                                <div>
+                                    <div style="margin-top: 20px;">
+                                        <img src="./antd/icon/上传.svg">
+                                    </div>
+                                    <p class="ant-upload-text">点击或将文件拖拽到这里上传</p>
+                                    <p class="ant-upload-hint">支持扩展名： .mp4 建议400M 以内</p>
+                                </div>
+                            </a-upload-dragger>
+                            <a-button v-if="btnshow" type="primary" block @click="lead"> 引入媒资库资源 </a-button>
+                        </div>
+                        <div style="width: 700px; height: 120px; margin-top: 60px;"> 
+                            <a-upload-dragger
+                                v-model:fileList="imgList"
+                                name="files"
+                                :multiple="true"
+                                :action="imgurl"
+                                @change="handleChangeimg"
+                                @drop="handleDrop"
+                                :headers="headers"
+                                :disabled="disabled"
+                                :before-upload="imgbeforeUpload"
+                            >
+                                <div style="margin-top: 20px;">
+                                    <img src="./antd/icon/上传.svg" alt="" srcset="">
+                                </div>
+                                <p class="ant-upload-text">点击或将文件拖拽到这里上传</p>
+                                <p class="ant-upload-hint">支持扩展名： .jpg .png文件</p>
+                            </a-upload-dragger>
+                        </div>
+                        <div style="width: 700px; height: 120px; margin-top: 55px;">
+                            <a-textarea v-model="remark" @change="remarkChange" placeholder="备注" allow-clear />
+                        </div>
+                    </a-col>
+               </a-row>
+            </div>
+            <div v-if="!changing">
+               <template>
+                <el-container>
+                    <el-header style="height: 10px;"><div style="cursor: pointer;" @click="goup"> <a><< 返回</a> </div> </el-header>
+                    <el-main> 
+                       <el-table 
+                       :data="tableDataMz" 
+                        style="width: 100%"
+                        ref="refTableMz"
+                        border
+                        highlight-current-row
+                        @row-click="clickTableRowMz"
+                        :row-key="getRowKeysMz"
+                        :expand-row-keys="expandsMz"
+                        >
+                        <el-table-column type="expand" width="1">
+                            <template slot-scope="scope">
+                              <div class="content-detail">
+                                <div style="padding: 10px">
+                                  <video
+                                    :src="scope.row.path"
+                                    controls
+                                    style="width: 100%"
+                                    v-if="scope.row.sourceType === 3"
+                                  ></video>
+                                  <img
+                                    style="width: 100%"
+                                    :src="scope.row.path"
+                                    alt=""
+                                    v-if="scope.row.sourceType === 1"
+                                  />
+                                  <audio
+                                    autoplay
+                                    controls
+                                    id="playMp31"
+                                    :src="scope.row.path"
+                                    v-if="scope.row.sourceType === 2"
+                                    style="width: 100%"
+                                  ></audio>
+                                </div>
+                                <div style="text-align: center">
+                                  <el-button
+                                    type="text"
+                                    icon="el-icon-finished"
+                                    @click="insertMz(scope.row)"
+                                    >插入</el-button
+                                  >
+                                </div>
+                              </div>
+                              <div class="operation"></div>
+                            </template>
+                          </el-table-column>
+                           <el-table-column
+                                prop="name"
+                                label="文件名称"
+                                width="auto"
+                                :show-overflow-tooltip="true">
+                            </el-table-column>
+                            <el-table-column
+                                label="文件来源"
+                                prop="originName"
+                                :show-overflow-tooltip="true"
+                                width="100"
+                                >
+                            </el-table-column>
+                            <el-table-column
+                                label="文件类型"
+                                prop="originName"
+                                :show-overflow-tooltip="true"
+                                width="100">
+                            </el-table-column>
+                            <el-table-column
+                                label="上传时间"
+                                prop="createTime"
+                                :show-overflow-tooltip="true"
+                                width="160"
+                            >
+                            </el-table-column>
+                      </el-table>
+                      <el-pagination
+                            v-show="totalMz > 0"
+                            :total="totalMz"
+                            :page.sync="getResourceListParams.currentPage"
+                            :limit.sync="getResourceListParams.pageSize"
+                            :page-sizes="[10, 20, 30, 50]"
+                            @current-change="getResourceListFromMzRequest"
+                        />
+                    </el-main>
+                  </el-container>
+               </template>
+           </div>
+    </div>
+</body>
+</html>
+<script> 
+	var app=new Vue({
+        el:'#video',
+        data:{
+            pageSize:10,
+            btnshow:true,
+            disabled:true,
+            current:0,
+            fileList:[],
+            imgList:[],
+            remark:"",
+            filedata:{type: 2},
+            fileurl:"",
+            imgurl:"",
+            headers:{Authorization: Cookies.get("Admin-Token")},
+            videoinfo:[],
+            tableDataMz: [],
+            changing:true,
+            totalMz: 0,
+            getResourceListParams: {
+                currentPage:1,
+                fileType:"3",
+                keyword:"",
+                pageSize:9,
+                storyType: 5,
+            },
+            expandsMz: []
+        },
+        methods: {
+           imgbeforeUpload(file, fileList){
+                const isjpeg = file.type === "image/jpeg" || file.type === "image/png";
+                if (!isjpeg) {
+                    this.$message({
+                        message: `仅支持 .jpg .png 类型。`,
+                        type: 'warning'
+                    });
+                }
+                return isjpeg
+           },
+           beforeUpload(file, fileList){
+                const isPNG = file.type === "video/mp4";
+                if (!isPNG) {
+                    this.$message({
+                        message: `${file.name} `,
+                        type: 'warning'
+                    });
+                }
+                return isPNG 
+           },
+           insertMz(row){
+                let editor = parent.tinymce.activeEditor
+                let range = editor.selection.getRng()
+                var divNode = editor.getDoc().createElement('video');
+                const realStr = row.path
+                divNode.src = realStr;
+                divNode.controls="controls";
+                // divNode.logofile2 = ""
+                // divNode.logofile = ""
+                divNode.loop = true
+                divNode.preload = ""
+                divNode.poster = row.playCover;
+                divNode.style["marginLeft"] =  "auto";
+                divNode.style["marginRight"] = "auto";
+                divNode.style["display"] = "block";
+                divNode.setAttribute('logofile2', "")
+                divNode.setAttribute('logofile', "")
+                range.insertNode(divNode); 
+                this.$message({
+                    message: '选入成功',
+                    type: 'success'
+                });
+           },
+           getRowKeysMz(row) {
+             return row.sourceId;
+           },
+           clickTableRowMz(row, index, e) {
+                if (this.expandsMz.includes(row.sourceId)) {
+                    this.expandsMz = this.expandsMz.filter((val) => val !== row.sourceId);
+                } else {
+                    //判断是否已经存在展开的行
+                    if (this.expandsMz.length != 0) {
+                    //如果存在展开行,清空expands数组,使它关闭
+                    this.expandsMz.splice(0, this.expandsMz.length);
+                    //打开点击的行
+                    this.expandsMz.push(row.sourceId);
+                    } else {
+                    //如果不存在展开行,直接push打开点击的行
+                    this.expandsMz.push(row.sourceId);
+                    }
+                }
+            },
+            getResourceListFromMzRequest(val){
+                this.getResourceListParams.currentPage = val
+                this.getResourceListFromMz(this.getResourceListParams)
+            },
+            goup(){
+                 this.changing = true
+            },
+            handleClick(row) {
+                console.log(row);
+            },
+            remarkChange(){
+                if(this.remark && this.current === 2){
+                    localStorage.setItem("remark",JSON.stringify(this.remark));
+                    this.current = 3
+                }
+            },
+            lead(){
+               this.changing = false
+               localStorage.removeItem('_videoList')
+            },
+            handleChangevideo(info){
+                this.btnshow = false
+                if(info.file.status === 'uploading'){
+                    parent.videoupload.isvideo = 2
+                }
+                if(info.file.status === 'done'){
+                    if(info.file.response.code == 500){
+                        this.$message.error(info.file.response.msg);
+                    }
+                    if(info.file.response.code == 200){
+                        parent.videoupload.isvideo = 3
+                        let inserts ={
+                            fileHashValue:info.file.response.data.fileHashValue,
+                            name:info.file.response.data.name,
+                            fileSize:info.file.response.data.fileSize,
+                            originalName:info.file.name,
+                            path:info.file.response.data.url,
+                            suffix: info.file.response.data.suffix,
+                            type:2,
+                            uploadType:2
+                        }
+                        let url = localStorage.getItem('_url')
+                        let token = Cookies.get("Admin-Token")
+                        axios.post(url+"api/platform/material/materialadd",inserts,{
+                            headers:{
+                                'Authorization': token
+                            },
+                        }).then(res1 =>{
+                            res1 
+                        }) 
+                    }
+                    this.current = 1
+                    this.disabled = false
+                    this.btnshow = true
+                    info.file.response.data
+                    localStorage.setItem("_videoList",JSON.stringify([info.file.response.data]));
+                }
+            },
+            handleDrop(info){
+            },
+            handleChangeimg(info){
+                if(info.file.status === 'uploading'){
+                    debugger
+                    parent.videoupload.isimg = 2
+                }
+                if(info.file.status === 'done'){
+                    parent.videoupload.isimg = 3
+                    this.current = 2
+                    localStorage.setItem("cover",JSON.stringify([info.file.response.data]));
+                }
+            },
+            getResourceListFromMz(getResourceListParams){
+                let url = localStorage.getItem('_url')
+                let token = Cookies.get("Admin-Token")
+                axios.post(url+"api/manuscript/media/resources",getResourceListParams,{
+                    headers:{
+                        'Authorization': token
+                    }
+                }).then(res =>{
+                    this.tableDataMz = res.data.data.data;
+                    this.totalMz = res.data.data.total;
+                })
+            },
+            init(){
+                let url = localStorage.getItem('_url')
+                this.fileurl= url+"api/ability/file/richtext"
+                this.imgurl = url+"api/ability/file/upload/many/img"
+                this.getResourceListFromMz(this.getResourceListParams)
+            }
+        },
+        mounted() {
+            this.init()
+        },
+    })
+</script>
