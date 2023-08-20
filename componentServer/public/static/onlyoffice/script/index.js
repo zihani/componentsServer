@@ -1,4 +1,6 @@
 const GetQueryString = function(name) {
+    this
+    debugger
     var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)");
     var r = window.location.search.substr(1).match(reg);
     if (r != null) return unescape(r[2]);
@@ -38,11 +40,12 @@ const createScript = (text)=>{
                         if(dev === -1 && uat === -1 && y === -1){
                             s.setAttribute('src',"https://ixxx/web-apps/apps/api/documents/api.js")
                         }
+                        s.setAttribute('src',"http://192.168.127.132/web-apps/apps/api/documents/api.js")
                         document.head.appendChild(s)
                         s.onload = resolve
                         s.onerror = reject
                     })
             }
 }
-
+GetQueryString("nb")
 createScript("onlyoffice")

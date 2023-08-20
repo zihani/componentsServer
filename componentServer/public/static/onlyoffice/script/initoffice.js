@@ -1,7 +1,5 @@
 setTimeout(function() {
-    // var iobj = document.createElement("iframe");
-    // debugger;
-    // iobj
+    debugger
     let title = decodeURIComponent(GetQueryString("title"))
     let strUrl = GetQueryString("url").split("/");
     //   console.log(GetQueryString("url"))
@@ -23,6 +21,7 @@ setTimeout(function() {
         docEditor.downloadAs('docx');
         docEditor.denyEditingRights('消息');
     }
+    debugger
     axios.get(_url + 'api/ability/office/editor', {
         params: {
             filePath: key,
