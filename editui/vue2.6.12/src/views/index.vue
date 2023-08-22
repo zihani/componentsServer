@@ -1,19 +1,29 @@
 <template>
-  <div class="app-container home">
-     <button @click="openOffice" >跳转</button>
+  <div class="home">
+    <tinymceEditor @text="text" @html="html"></tinymceEditor>
   </div>
 </template>
-
 <script>
+import tinymceEditor from '@/views/components/tinymceEditor/index.vue'
 export default {
+  components:{tinymceEditor},
   name: "Index",
   data() {
     return {
-      // 版本号
-      version: "3.8.6"
+      contentText:"",
+      contentHtml:""
     };
   },
   methods: {
+    text(text){
+      this.contentText = text
+    },
+    html(html){
+       this.contentHtml = html
+    },
+    echo(value){
+      console.log(value)
+    },
     openOffice(){
       debugger
       console.log(onlyoffice())
