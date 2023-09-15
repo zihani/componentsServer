@@ -10,18 +10,6 @@
                 </div>
                 <quote v-else>{{notice}}</quote>
             </div>
-
-            <!--焦点图-->
-            <div class="top-feature" v-if="!hideSlogan">
-                <section-title>
-                    <div style="display: flex;align-items: flex-end;">聚焦<small-ico></small-ico></div>
-                </section-title>
-                <div class="feature-content">
-                    <div class="feature-item" v-for="item in features" :key="item.title">
-                        <Feature :data="item"></Feature>
-                    </div>
-                </div>
-            </div>
             <!--文章列表-->
             <main class="site-main" :class="{'search':hideSlogan}">
                 <section-title v-if="!hideSlogan">推荐</section-title>
@@ -29,7 +17,6 @@
                     <post :post="item" :key="item.id"></post>
                 </template>
             </main>
-
             <!--加载更多-->
             <div class="more" v-show="hasNextPage">
                 <div class="more-btn" @click="loadMore">More</div>
@@ -84,12 +71,13 @@
             fetchFocus() {
                 fetchFocus().then(res => {
                     this.features = res.data || []
-                }).catch(err => {
+                  }).catch(err => {
                     console.log(err)
                 })
             },
             fetchList() {
                 fetchList().then(res => {
+                    debugger
                     this.postList = res.data.items || []
                     this.currPage = res.data.page
                     this.hasNextPage = res.data.hasNextPage
@@ -99,6 +87,7 @@
             },
             loadMore() {
                 fetchList({page:this.currPage+1}).then(res => {
+                    debugger
                     this.postList = this.postList.concat(res.data.items || [])
                     this.currPage = res.data.page
                     this.hasNextPage = res.data.hasNextPage

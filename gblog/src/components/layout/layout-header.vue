@@ -2,14 +2,7 @@
     <div id="layout-header" :class="{'fixed':fixed,'hidden':hidden}" @click.stop="mobileShow=false">
         <div class="site-logo">
             <router-link to="/">
-                <div style="width: 100%;">
-                    <div>
-                        <i class="nes-mario"></i>
-                    </div>
-                    <div class="nes-balloon from-left">
-                        <p>Hello </p>
-                    </div>
-                </div>
+                <!-- <img src="@/assets/img/touxiang.jpg" alt=""> -->
             </router-link>
         </div>
         <div class="menus-btn" @click.stop="mobileShow=!mobileShow">
@@ -19,15 +12,18 @@
             <div class="menu-item header-search"><header-search/></div>
             <div class="menu-item"><router-link to="/">首页</router-link></div>
             <div class="menu-item hasChild">
-                <a href="#">语雀文章</a>
+                <a href="#" @click="openUrl({href:`https://www.yuque.com/dashboard`})">语雀文章</a>
                 <div class="childMenu" v-if="category.length">
-                    <div class="sub-menu" v-for="item in category" :key="item.title">
+                    <div class="sub-menu" v-for="item in category" :key="item.id">
                         <span @click="openUrl(item)"><a>{{item.title}}</a></span>
                     </div>
                 </div>
             </div>
-            <div class="menu-item"><router-link to="/friend">友链</router-link></div>
-            <div class="menu-item"><router-link to="/about">关于</router-link></div>
+            <div class="menu-item hasChild">
+                <a href="#" @click="openArticle">文章</a>
+            </div>
+            <!-- <div class="menu-item"><router-link to="/friend">友链</router-link></div>
+            <div class="menu-item"><router-link to="/about">关于</router-link></div> -->
         </div>
     </div>
 </template>
@@ -51,8 +47,7 @@
                         href:"https://www.yuque.com/u1261089/va0mph/ldegnme3ilhqmvtc",
                         id:2,
                         title:"vue组件和方法"
-                    }
-                    ,
+                    },
                     {
                         href:"https://www.yuque.com/u1261089/va0mph/ldegnme3ilhqmvtc",
                         id:3,
@@ -69,6 +64,9 @@
             window.removeEventListener("scroll", this.watchScroll)
         },
         methods: {
+            openArticle(){
+               this.$router.push({ path: "/articlehome" });
+            },
             openUrl(item){
                 window.open(item.href)
             },

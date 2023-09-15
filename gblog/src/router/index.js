@@ -23,17 +23,23 @@ const routes = [
         component: () => import('../views/Home.vue'),
         meta: { title: '搜索', params: 'words'}
     },
+    // {
+    //     path: '/about',
+    //     name: 'about',
+    //     component: () => import('../views/About.vue'),
+    //     meta: { title: '关于'}
+    // },
+    // {
+    //     path: '/friend',
+    //     name: 'friend',
+    //     component: () => import('../views/Friend.vue'),
+    //     meta: { title: '友链'}
+    // },
     {
-        path: '/about',
-        name: 'about',
-        component: () => import('../views/About.vue'),
-        meta: { title: '关于'}
-    },
-    {
-        path: '/friend',
-        name: 'friend',
-        component: () => import('../views/Friend.vue'),
-        meta: { title: '友链'}
+        path: '/articlehome',
+        name: 'article',
+        component: () => import('../views/Articlehome.vue'),
+        meta: { title: 'Articlehome'}
     },
     {
         path: '/article/:id',
@@ -49,7 +55,7 @@ const router = new VueRouter({
     routes
 })
 router.beforeEach((to, from, next) => {
-    let title = 'Gblog'
+    let title = ''
     if (to.meta.params){
         title = `${to.meta.title}:${to.params[to.meta.params] || ''} - ${title}`
     }else {

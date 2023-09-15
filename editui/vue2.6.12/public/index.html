@@ -31,27 +31,203 @@
       height: 100%;
       z-index: 999999;
     }
-
+    #loader,
+    #loader > div {
+      position: relative;
+      box-sizing: border-box;
+    }
     #loader {
       display: block;
       position: relative;
-      left: 50%;
+      left: 48%;
       top: 50%;
-      width: 150px;
-      height: 150px;
-      margin: -75px 0 0 -75px;
-      border-radius: 50%;
-      border: 3px solid transparent;
-      border-top-color: #FFF;
-      -webkit-animation: spin 2s linear infinite;
-      -ms-animation: spin 2s linear infinite;
-      -moz-animation: spin 2s linear infinite;
-      -o-animation: spin 2s linear infinite;
-      animation: spin 2s linear infinite;
+      font-size: 0;
+      color: #000;
+      margin: 30px;
       z-index: 1001;
     }
+    #loader.la-dark {
+      color: #333;
+    }
+    #loader > div {
+      display: inline-block;
+      float: none;
+      background-color: currentColor;
+      border: 0 solid currentColor;
+    }
 
-    #loader:before {
+    #loader {
+      width: 18px;
+      height: 18px;
+    }
+
+    #loader > div {
+      position: absolute;
+      width: 6px;
+      height: 6px;
+      border-radius: 0;
+      opacity: 0;
+      transform: translate(100%, 100%);
+      animation: ball-8bits 1s 0s ease infinite;
+    }
+
+    #loader > div:nth-child(1) {
+      animation-delay: -0.9375s;
+    }
+
+    #loader > div:nth-child(2) {
+      animation-delay: -0.875s;
+    }
+
+    #loader > div:nth-child(3) {
+      animation-delay: -0.8125s;
+    }
+
+    #loader > div:nth-child(4) {
+      animation-delay: -0.75s;
+    }
+
+    #loader > div:nth-child(5) {
+      animation-delay: -0.6875s;
+    }
+
+    #loader > div:nth-child(6) {
+      animation-delay: -0.625s;
+    }
+
+    #loader > div:nth-child(7) {
+      animation-delay: -0.5625s;
+    }
+
+    #loader > div:nth-child(8) {
+      animation-delay: -0.5s;
+    }
+
+    #loader > div:nth-child(9) {
+      animation-delay: -0.4375s;
+    }
+
+    #loader > div:nth-child(10) {
+      animation-delay: -0.375s;
+    }
+
+    #loader > div:nth-child(11) {
+      animation-delay: -0.3125s;
+    }
+
+    #loader > div:nth-child(12) {
+      animation-delay: -0.25s;
+    }
+
+    #loader > div:nth-child(13) {
+      animation-delay: -0.1875s;
+    }
+
+    #loader > div:nth-child(14) {
+      animation-delay: -0.125s;
+    }
+
+    #loader > div:nth-child(15) {
+      animation-delay: -0.0625s;
+    }
+
+    #loader > div:nth-child(16) {
+      animation-delay: 0s;
+    }
+
+    #loader > div:nth-child(1) {
+      top: -100%;
+      left: 0;
+    }
+
+    #loader > div:nth-child(2) {
+      top: -100%;
+      left: 33.3333333333%;
+    }
+
+    #loader > div:nth-child(3) {
+      top: -66.6666666667%;
+      left: 66.6666666667%;
+    }
+
+    #loader > div:nth-child(4) {
+      top: -33.3333333333%;
+      left: 100%;
+    }
+
+    #loader > div:nth-child(5) {
+      top: 0;
+      left: 100%;
+    }
+
+    #loader > div:nth-child(6) {
+      top: 33.3333333333%;
+      left: 100%;
+    }
+
+    #loader > div:nth-child(7) {
+      top: 66.6666666667%;
+      left: 66.6666666667%;
+    }
+
+    #loader > div:nth-child(8) {
+      top: 100%;
+      left: 33.3333333333%;
+    }
+
+    #loader > div:nth-child(9) {
+      top: 100%;
+      left: 0;
+    }
+
+    #loader > div:nth-child(10) {
+      top: 100%;
+      left: -33.3333333333%;
+    }
+
+    #loader > div:nth-child(11) {
+      top: 66.6666666667%;
+      left: -66.6666666667%;
+    }
+
+    #loader > div:nth-child(12) {
+      top: 33.3333333333%;
+      left: -100%;
+    }
+
+    #loader > div:nth-child(13) {
+      top: 0;
+      left: -100%;
+    }
+
+    #loader > div:nth-child(14) {
+      top: -33.3333333333%;
+      left: -100%;
+    }
+
+    #loader > div:nth-child(15) {
+      top: -66.6666666667%;
+      left: -66.6666666667%;
+    }
+
+    #loader > div:nth-child(16) {
+      top: -100%;
+      left: -33.3333333333%;
+    }
+
+    @keyframes ball-8bits {
+      0% {
+        opacity: 1;
+      }
+      50% {
+        opacity: 1;
+      }
+      51% {
+        opacity: 0;
+      }
+    }
+
+    /* #loader:before {
       content: "";
       position: absolute;
       top: 5px;
@@ -83,10 +259,10 @@
       -ms-animation: spin 1.5s linear infinite;
       -webkit-animation: spin 1.5s linear infinite;
       animation: spin 1.5s linear infinite;
-    }
+    } */
 
 
-    @-webkit-keyframes spin {
+    /* @-webkit-keyframes spin {
       0% {
         -webkit-transform: rotate(0deg);
         -ms-transform: rotate(0deg);
@@ -110,7 +286,7 @@
         -ms-transform: rotate(360deg);
         transform: rotate(360deg);
       }
-    }
+    } */
 
 
     #loader-wrapper .loader-section {
@@ -118,7 +294,7 @@
       top: 0;
       width: 51%;
       height: 100%;
-      background: #7171C6;
+      background: #f7f7f7;
       z-index: 1000;
       -webkit-transform: translateX(0);
       -ms-transform: translateX(0);
@@ -132,39 +308,6 @@
     #loader-wrapper .loader-section.section-right {
       right: 0;
     }
-
-
-    .loaded #loader-wrapper .loader-section.section-left {
-      -webkit-transform: translateX(-100%);
-      -ms-transform: translateX(-100%);
-      transform: translateX(-100%);
-      -webkit-transition: all 0.7s 0.3s cubic-bezier(0.645, 0.045, 0.355, 1.000);
-      transition: all 0.7s 0.3s cubic-bezier(0.645, 0.045, 0.355, 1.000);
-    }
-
-    .loaded #loader-wrapper .loader-section.section-right {
-      -webkit-transform: translateX(100%);
-      -ms-transform: translateX(100%);
-      transform: translateX(100%);
-      -webkit-transition: all 0.7s 0.3s cubic-bezier(0.645, 0.045, 0.355, 1.000);
-      transition: all 0.7s 0.3s cubic-bezier(0.645, 0.045, 0.355, 1.000);
-    }
-
-    .loaded #loader {
-      opacity: 0;
-      -webkit-transition: all 0.3s ease-out;
-      transition: all 0.3s ease-out;
-    }
-
-    .loaded #loader-wrapper {
-      visibility: hidden;
-      -webkit-transform: translateY(-100%);
-      -ms-transform: translateY(-100%);
-      transform: translateY(-100%);
-      -webkit-transition: all 0.3s 1s ease-out;
-      transition: all 0.3s 1s ease-out;
-    }
-
     .no-js #loader-wrapper {
       display: none;
     }
@@ -174,8 +317,8 @@
     }
 
     #loader-wrapper .load_title {
-      font-family: 'Open Sans';
-      color: #FFF;
+      font-family: 'Press Start 2P', cursive;
+      color: #000000;
       font-size: 19px;
       width: 100%;
       text-align: center;
@@ -187,23 +330,41 @@
     }
 
     #loader-wrapper .load_title span {
-      font-weight: normal;
+      /* font-weight: bold; */
       font-style: italic;
       font-size: 13px;
-      color: #FFF;
+      color: #000000;
       opacity: 0.5;
     }
   </style>
   </head>
   <body>
     <div id="app">
-	    <div id="loader-wrapper">
-		    <div id="loader"></div>
-		    <div class="loader-section section-left"></div>
-		    <div class="loader-section section-right"></div>
-		    <div class="load_title">正在加载系统资源，请耐心等待</div>
+      <div id="loader-wrapper">
+        <div id="loader">
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
         </div>
-	</div>
+        <div class="loader-section section-left"></div>
+        <div class="loader-section section-right"></div>
+        <div class="load_title"><strong>正在加载中。。。</strong></div>
+        </div>
+	  </div>
   </body>
 </html>
-<script src="http://127.0.0.1:7001/public/static/onlyoffice/script/onlyoffice.js"></script>
+<!-- <script type="text/javascript" src="https://unpkg.com/jsnes/dist/jsnes.min.js"></script> -->
+<!-- <script src="http://127.0.0.1:7001/public/static/onlyoffice/script/onlyoffice.js"></script> -->

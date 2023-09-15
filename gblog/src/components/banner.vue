@@ -1,20 +1,21 @@
 <template>
     <div id="banner" :class="{'home-banner':isHome}">
-        <div class="banner-img" :style="{'background-image': `url(${src})`}">
+        <div class="banner-img" :style="{'background-image': `url(${src})`}" >
+            <!-- <img src="@/assets/img/beijing.jpeg" alt=""> -->
             <template v-if="isHome">
-                <!--博主信息-->
+                    <!--博主信息-->
                 <div class="focusinfo">
                     <!-- 头像 -->
                     <div class="header-tou">
-                        <router-link to="/"><img :src="websiteInfo.avatar"></router-link>
+                        <!-- <router-link to="/"><img :src="websiteInfo.avatar"></router-link> -->
                     </div>
                     <!-- 简介 -->
                     <div class="header-info">
-                        <p>{{websiteInfo.slogan}}</p>
+                        <!-- <p>{{websiteInfo.slogan}}</p> -->
                     </div>
                     <!-- 社交信息 -->
                     <div class="top-social">
-                        <div v-for="item in socials" :key="item.id" :title="item.title"><a :href="item.href" target="_blank" :style="{'color':item.color}"><i class="iconfont" :class="item.icon"></i></a></div>
+                        <!-- <div v-for="item in socials" :key="item.id" :title="item.title"><a :href="item.href" target="_blank" :style="{'color':item.color}"><i class="iconfont" :class="item.icon"></i></a></div> -->
                     </div>
                 </div>
                 <!--左右倾斜-->
@@ -37,7 +38,7 @@
         props:{
             src:{
                 type: String,
-                default: 'https://s1.ax1x.com/2020/05/23/YxaLMq.jpg'
+                default: " http://localhost:8888" +'/backgroundImage.jpeg'
             },
             isHome:{
                 type: [Boolean,String],
@@ -64,7 +65,6 @@
 </script>
 
 <style scoped lang="less">
-
     #banner {
         position: relative;
         margin-top: 80px;

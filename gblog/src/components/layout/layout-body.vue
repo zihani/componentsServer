@@ -2,11 +2,13 @@
     <div id="layout-body">
         <router-view></router-view>
         <back-top></back-top>
+        <table-pet></table-pet>
     </div>
 </template>
 
 <script>
     import backTop from '@/components/back-top'
+    import tablePet from '@/components/table-pet'
     export default {
         name: "layout-body",
         data(){
@@ -14,7 +16,8 @@
               minHeight: 600
           }
         },
-        components: { backTop }
+        components: { backTop ,tablePet},
+        
     }
 </script>
 

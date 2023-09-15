@@ -1,7 +1,7 @@
 <template>
     <div id="loading" v-show="loading">
         <div class="loader">
-            <div class="loader-inner la-pacman la-2x">
+            <div class="la-pacman la-2x">
                 <div></div>
                 <div></div>
                 <div></div>
